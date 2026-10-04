@@ -1,0 +1,6 @@
+{
+  "name": "Save Your Plant",
+  "description": "Interactive houseplant rescue guide, diagnostic tool, watering schedule calculator, and 7-day plant recovery toolkit.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
