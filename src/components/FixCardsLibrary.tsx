@@ -1,13 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TWENTY_FIX_CARDS } from '../data/plantData';
 import { FixCard } from '../types';
 import { Search, Filter, Layers, Check, Copy, Printer, X, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
 
-export const FixCardsLibrary: React.FC = () => {
+interface FixCardsLibraryProps {
+  initialCardId?: string | null;
+  onCardSelected?: (card: FixCard) => void;
+}
+
+export const FixCardsLibrary: React.FC<FixCardsLibraryProps> = ({ initialCardId, onCardSelected }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeModalCard, setActiveModalCard] = useState<FixCard | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  // If initialCardId is provided or updated from diagnosis, open it automatically
+  useEffect(() => {
+    if (initialCardId) {
+      const targetCard = TWENTY_FIX_CARDS.find(c => c.id === initialCardId);
+      if (targetCard) {
+        setActiveModalCard(targetCard);
+      }
+    }
+  }, [initialCardId]);
 
   const categories = [
     { id: 'all', label: 'All 20 Fix Cards' },
@@ -30,6 +45,13 @@ export const FixCardsLibrary: React.FC = () => {
 
     return matchesCat && matchesSearch;
   });
+
+  const handleOpenCard = (card: FixCard) => {
+    setActiveModalCard(card);
+    if (onCardSelected) {
+      onCardSelected(card);
+    }
+  };
 
   const handleCopyCard = (card: FixCard) => {
     const text = `Fix Card: ${card.title}
@@ -93,39 +115,53 @@ Affected Plants: ${card.affectedPlants.join(', ')}`;
 
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {filteredCards.map((card) => (
-            <div
-              key={card.id}
-              onClick={() => setActiveModalCard(card)}
-              className="rounded-2xl bg-white/[0.03] border border-white/10 hover:border-[#3ddc84]/50 p-5 transition-all hover:-translate-y-1 hover:bg-white/[0.05] cursor-pointer flex flex-col justify-between group"
-            >
-              <div>
-                <div className="flex items-center justify-between text-[11px] text-[#9db8ac] mb-2.5">
-                  <span className="uppercase font-semibold tracking-wider text-[#3ddc84]">
-                    {card.category}
+          {filteredCards.map((card) => {
+            const isHighlighted = initialCardId === card.id;
+
+            return (
+              <div
+                key={card.id}
+                onClick={() => handleOpenCard(card)}
+                className={`rounded-2xl p-5 transition-all hover:-translate-y-1 cursor-pointer flex flex-col justify-between group relative ${
+                  isHighlighted 
+                    ? 'bg-[#133324] border-2 border-[#3ddc84] shadow-[0_4px_25px_rgba(61,220,132,0.3)]'
+                    : 'bg-white/[0.03] border border-white/10 hover:border-[#3ddc84]/50 hover:bg-white/[0.05]'
+                }`}
+              >
+                {isHighlighted && (
+                  <span className="absolute -top-2.5 right-4 bg-[#3ddc84] text-[#04170d] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    AI Matched
                   </span>
-                  <span>Card #{card.id.replace('card-', '')}</span>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between text-[11px] text-[#9db8ac] mb-2.5">
+                    <span className="uppercase font-semibold tracking-wider text-[#3ddc84]">
+                      {card.category}
+                    </span>
+                    <span>Card #{card.id.replace('card-', '')}</span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-white group-hover:text-[#3ddc84] transition-colors leading-snug">
+                    {card.title}
+                  </h3>
+
+                  <p className="text-xs text-[#9db8ac] mt-2.5 line-clamp-2 leading-relaxed">
+                    {card.symptom}
+                  </p>
                 </div>
 
-                <h3 className="text-base font-bold text-white group-hover:text-[#3ddc84] transition-colors leading-snug">
-                  {card.title}
-                </h3>
-
-                <p className="text-xs text-[#9db8ac] mt-2.5 line-clamp-2 leading-relaxed">
-                  {card.symptom}
-                </p>
+                <div className="mt-5 pt-3.5 border-t border-white/5 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-[#9db8ac]/80 truncate max-w-[140px]">
+                    {card.affectedPlants.slice(0, 2).join(', ')}...
+                  </span>
+                  <span className="text-[#3ddc84] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                    View Card →
+                  </span>
+                </div>
               </div>
-
-              <div className="mt-5 pt-3.5 border-t border-white/5 flex items-center justify-between text-xs">
-                <span className="text-[11px] text-[#9db8ac]/80 truncate max-w-[140px]">
-                  {card.affectedPlants.slice(0, 2).join(', ')}...
-                </span>
-                <span className="text-[#3ddc84] font-medium flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                  View Card →
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {filteredCards.length === 0 && (
@@ -143,7 +179,7 @@ Affected Plants: ${card.affectedPlants.join(', ')}`;
           onClick={() => setActiveModalCard(null)}
         >
           <div 
-            className="w-full max-w-2xl bg-[#091510] border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6"
+            className="w-full max-w-2xl bg-[#091510] border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto space-y-6 animate-in fade-in zoom-in-95 duration-150"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}

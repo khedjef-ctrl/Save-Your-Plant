@@ -1,12 +1,13 @@
 import React from 'react';
-import { Sprout, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
+import { Sprout, ArrowRight, ShieldCheck } from 'lucide-react';
 
 interface FooterProps {
   onOpenPricing: () => void;
   onOpenDiagnosis: () => void;
+  onNavigate: (view: 'home' | 'pdf-studio' | 'tracker' | 'privacy' | 'terms' | 'refund' | 'contact' | 'success') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenPricing, onOpenDiagnosis }) => {
+export const Footer: React.FC<FooterProps> = ({ onOpenPricing, onOpenDiagnosis, onNavigate }) => {
   return (
     <>
       {/* Final Conversion Section */}
@@ -32,7 +33,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPricing, onOpenDiagnosis }
           <div className="pt-2 flex flex-wrap justify-center items-center gap-4">
             <button
               onClick={onOpenPricing}
-              className="px-8 py-4 text-sm font-bold text-[#04170d] bg-gradient-to-r from-[#3ddc84] to-[#22b06a] hover:from-[#49e38e] hover:to-[#2bc074] rounded-full shadow-[0_10px_35px_rgba(61,220,132,0.35)] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
+              className="px-8 py-4 text-sm font-bold text-[#04170d] bg-gradient-to-r from-[#3ddc84] to-[#22b06a] hover:from-[#4be592] hover:to-[#2bc074] rounded-full shadow-[0_10px_35px_rgba(61,220,132,0.35)] transition-all hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
             >
               <span>Save My Plant Today</span>
               <ArrowRight className="w-4 h-4" />
@@ -54,26 +55,46 @@ export const Footer: React.FC<FooterProps> = ({ onOpenPricing, onOpenDiagnosis }
 
       {/* Main Quiet Footer */}
       <footer className="py-12 border-t border-white/10 bg-[#040806] text-xs text-[#9db8ac]">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2.5 text-sm font-bold text-[#eafaf1]">
-            <div className="w-6 h-6 rounded bg-[#3ddc84] flex items-center justify-center text-[#04170d]">
-              <Sprout className="w-4 h-4" />
+        <div className="max-w-6xl mx-auto px-6 space-y-8">
+          
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <button 
+              onClick={() => onNavigate('home')}
+              className="flex items-center gap-2.5 text-sm font-bold text-[#eafaf1] cursor-pointer"
+            >
+              <div className="w-6 h-6 rounded bg-[#3ddc84] flex items-center justify-center text-[#04170d]">
+                <Sprout className="w-4 h-4" />
+              </div>
+              <span>SaveYourPlant</span>
+            </button>
+
+            <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-[#9db8ac]">
+              <button onClick={() => onNavigate('home')} className="hover:text-white transition-colors cursor-pointer">Home</button>
+              <button onClick={() => onNavigate('pdf-studio')} className="hover:text-white transition-colors cursor-pointer">PDF Studio (PDFMe)</button>
+              <button onClick={() => onNavigate('tracker')} className="hover:text-white transition-colors cursor-pointer">Plant Tracker</button>
+              <a href="#course" onClick={() => onNavigate('home')} className="hover:text-white transition-colors">Email Course</a>
+              <a href="#tools" onClick={() => onNavigate('home')} className="hover:text-white transition-colors">Tools</a>
+              <a href="#pricing" onClick={() => onNavigate('home')} className="hover:text-white transition-colors">Pricing</a>
+              <a href="#faq" onClick={() => onNavigate('home')} className="hover:text-white transition-colors">FAQ</a>
             </div>
-            <span>SaveYourPlant</span>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 text-xs">
-            <a href="#features" className="hover:text-white transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
-            <a href="#tools" className="hover:text-white transition-colors">Diagnostic Tools</a>
-            <a href="#cards" className="hover:text-white transition-colors">20 Fix Cards</a>
-            <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-            <a href="#faq" className="hover:text-white transition-colors">FAQ</a>
+          <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-[#9db8ac]/70">
+            <div className="flex items-center gap-4">
+              <button onClick={() => onNavigate('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</button>
+              <span>·</span>
+              <button onClick={() => onNavigate('terms')} className="hover:text-white transition-colors cursor-pointer">Terms of Service</button>
+              <span>·</span>
+              <button onClick={() => onNavigate('refund')} className="hover:text-white transition-colors cursor-pointer">Refund Guarantee</button>
+              <span>·</span>
+              <button onClick={() => onNavigate('contact')} className="hover:text-white transition-colors cursor-pointer">Contact Desk</button>
+            </div>
+
+            <div>
+              © {new Date().getFullYear()} SaveYourPlant. All botanical & digital product rights reserved.
+            </div>
           </div>
 
-          <div className="text-center md:text-right text-[11px] text-[#9db8ac]/60">
-            © {new Date().getFullYear()} SaveYourPlant. All botanical rights reserved.
-          </div>
         </div>
       </footer>
     </>

@@ -1,13 +1,20 @@
 import React from 'react';
 import { PRICING_TIERS } from '../data/plantData';
 import { PricingTier } from '../types';
-import { Check, ShieldCheck, Sparkles, ArrowRight } from 'lucide-react';
+import { Check, ShieldCheck, FileText, ArrowRight, Sparkles } from 'lucide-react';
+import { CheckoutButton } from './CheckoutButton';
 
 interface PricingSectionProps {
   onSelectTier: (tier: PricingTier) => void;
+  onOpenPdfSample: () => void;
+  onSuccessRedirect?: (orderId: string, email: string) => void;
 }
 
-export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier }) => {
+export const PricingSection: React.FC<PricingSectionProps> = ({
+  onSelectTier,
+  onOpenPdfSample,
+  onSuccessRedirect
+}) => {
   return (
     <section id="pricing" className="py-24 border-t border-white/10 relative">
       <div className="max-w-6xl mx-auto px-6">
@@ -75,17 +82,27 @@ export const PricingSection: React.FC<PricingSectionProps> = ({ onSelectTier }) 
                   </ul>
                 </div>
 
-                <div className="pt-6 border-t border-white/10">
-                  <button
-                    onClick={() => onSelectTier(tier)}
-                    className={`w-full py-3.5 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                <div className="pt-6 border-t border-white/10 space-y-3">
+                  {/* Stripe / Checkout Button */}
+                  <CheckoutButton
+                    tierId={tier.id}
+                    tierName={tier.name}
+                    price={tier.price}
+                    onSuccessRedirect={onSuccessRedirect}
+                    className={
                       isPro
                         ? 'bg-gradient-to-r from-[#3ddc84] to-[#22b06a] hover:from-[#4be592] hover:to-[#2bc074] text-[#04170d] shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]'
                         : 'bg-white/10 hover:bg-white/15 text-white border border-white/10 hover:border-white/20'
-                    }`}
+                    }
+                  />
+
+                  {/* Free Sample Preview trigger */}
+                  <button
+                    onClick={onOpenPdfSample}
+                    className="w-full py-2 text-[11px] font-medium text-[#9db8ac] hover:text-[#3ddc84] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
-                    <span>{tier.ctaText}</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <FileText className="w-3.5 h-3.5 text-[#3ddc84]" />
+                    <span>Preview Sample PDF (First 10 Pages) →</span>
                   </button>
                 </div>
               </div>
